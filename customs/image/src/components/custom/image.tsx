@@ -32,6 +32,8 @@ const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
     },
     ref
   ) => {
+    const [lowResLoaded, setLowResLoaded] = useState(false);
+
     const [isLoaded, setIsLoaded] = useState(false);
     const [hasError, setHasError] = useState(false);
 
@@ -47,41 +49,72 @@ const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
           "rounded-md shadow-black/5 shadow-none group relative overflow-hidden bg-zinc-50 dark:bg-content2",
           !isLoaded &&
             !hasError &&
-            "before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-zinc-100/50 before:to-transparent",
+            "before:opacity-100 before:absolute before:inset-0 before:z-10 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-zinc-100/50 before:to-transparent",
           !isLoaded &&
             !hasError &&
-            "after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-zinc-50",
+            "after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-zinc-50 after:rounded-md",
           !width && !height ? "max-w-full h-auto" : "overflow-hidden",
           classNames?.base
         )}
         style={{
-          maxWidth: width,
+          width: width,
+          height: height,
         }}
       >
-        <NextImage
-          alt={alt}
-          // src={hasError ? "/placeholder.png" : src || "/placeholder.png"}
-          src={src}
-          fill={!(width && height)}
-          width={width}
-          height={height}
-          style={{
-            height: height,
-          }}
-          className={cn(
-            "!relative z-10 shadow-black/5 data-[loaded=true]:opacity-100 shadow-none opacity-0 transition-transform-opacity motion-reduce:transition-none !duration-300 rounded-md",
-            className,
-            classNames?.img
-          )}
-          data-loaded={isLoaded}
-          fetchPriority="high"
-          decoding="sync"
-          loading={loading}
-          loader={imageLoader}
-          onLoad={() => setIsLoaded(true)}
-          onError={(e) => loadError(e)}
-          {...props}
-        />
+        {!isLoaded && (
+          <NextImage
+            alt={alt}
+            src={src}
+            fill={!(width && height)}
+            width={width}
+            height={height}
+            style={{
+              height: height,
+            }}
+            className={cn(
+              "absolute inset-0 z-0 w-full h-full object-cover",
+              className,
+              classNames?.img
+            )}
+            fetchPriority="low"
+            decoding="async"
+            loading={loading}
+            loader={() =>
+              imageLoader({
+                src: src as string,
+                width: 1,
+                quality: 1,
+              })
+            }
+            onLoad={() => setLowResLoaded(true)}
+          />
+        )}
+        {lowResLoaded && (
+          <NextImage
+            alt={alt}
+            // src={hasError ? "/placeholder.png" : src || "/placeholder.png"}
+            src={src}
+            fill={!(width && height)}
+            width={width}
+            height={height}
+            style={{
+              height: height,
+            }}
+            className={cn(
+              "!relative z-10 shadow-black/5 data-[loaded=true]:opacity-100 shadow-none opacity-0 transition-transform-opacity motion-reduce:transition-none !duration-300 rounded-md",
+              className,
+              classNames?.img
+            )}
+            data-loaded={isLoaded}
+            fetchPriority="low"
+            decoding="async"
+            loading={loading}
+            loader={imageLoader}
+            onLoad={() => setIsLoaded(true)}
+            onError={(e) => loadError(e)}
+            {...props}
+          />
+        )}
       </div>
     );
   }
