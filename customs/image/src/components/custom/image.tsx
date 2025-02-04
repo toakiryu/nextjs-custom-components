@@ -16,6 +16,7 @@ export interface CustomImageProps
     placeholder?: string;
     img?: string;
   };
+  rounded?: "sm" | "md" | "lg" | "xl" | string;
 }
 
 const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
@@ -28,6 +29,7 @@ const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
       className,
       classNames,
       loading = "eager",
+      rounded = "6px",
       ...props
     },
     ref
@@ -46,33 +48,29 @@ const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-md shadow-black/5 shadow-none group relative overflow-hidden bg-zinc-50 dark:bg-content2",
+          `shadow-black/5 shadow-none group relative overflow-hidden`,
           !isLoaded &&
             !hasError &&
             "before:opacity-100 before:absolute before:inset-0 before:z-10 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-zinc-100/50 before:to-transparent",
           !isLoaded &&
             !hasError &&
-            "after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-zinc-50 after:rounded-md",
-          !width && !height ? "max-w-full h-auto" : "overflow-hidden",
+            `after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-zinc-50 after:backdrop-blur-sm`,
           classNames?.base
         )}
         style={{
-          width: width,
+          maxWidth: width || "fit-content",
           height: height,
+          borderRadius: rounded,
         }}
+        suppressHydrationWarning
       >
         {!isLoaded && (
           <NextImage
             alt={alt}
             src={src}
-            fill={!(width && height)}
-            width={width}
-            height={height}
-            style={{
-              height: height,
-            }}
+            fill
             className={cn(
-              "absolute inset-0 z-0 w-full h-full object-cover",
+              "absolute inset-0 z-0 max-w-full h-auto object-cover",
               className,
               classNames?.img
             )}
@@ -92,16 +90,10 @@ const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
         {lowResLoaded && (
           <NextImage
             alt={alt}
-            // src={hasError ? "/placeholder.png" : src || "/placeholder.png"}
             src={src}
-            fill={!(width && height)}
-            width={width}
-            height={height}
-            style={{
-              height: height,
-            }}
+            fill
             className={cn(
-              "!relative z-10 shadow-black/5 data-[loaded=true]:opacity-100 shadow-none opacity-0 transition-transform-opacity motion-reduce:transition-none !duration-300 rounded-md",
+              "!relative z-10 max-w-full h-auto shadow-black/5 opacity-0 data-[loaded=true]:opacity-100 blur-md data-[loaded=true]:blur-none shadow-none transition-transform-opacity motion-reduce:transition-none transition-all duration-300 ease-in-out object-cover",
               className,
               classNames?.img
             )}
@@ -110,7 +102,7 @@ const Image = React.forwardRef<HTMLImageElement, CustomImageProps>(
             decoding="async"
             loading={loading}
             loader={imageLoader}
-            onLoad={() => setIsLoaded(true)}
+            onLoad={() => setTimeout(() => setIsLoaded(true), 100)}
             onError={(e) => loadError(e)}
             {...props}
           />
