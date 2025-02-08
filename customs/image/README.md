@@ -29,7 +29,7 @@ export default {
 1. 必要なパッケージをインストール
 
 ```bash
-npm i clsx tailwind-merge
+npm i clsx tailwind-merge autoprefixer
 ```
 
 2. コンポーネントの作成
@@ -37,6 +37,18 @@ npm i clsx tailwind-merge
 > /src/lib/utils.ts
 
 このファイルをコピーして追加してください。
+
+3. `config` の更新
+
+プラグインに `autoprefixer` を追加してください。
+
+```js
+const config = {
+  plugins: {
+    autoprefixer: {},
+  },
+};
+```
 
 ## 3. カスタムコンポーネントの作成
 
