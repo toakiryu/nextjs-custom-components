@@ -1,12 +1,15 @@
 # セットアップ方法
 
-## 1. Tailwindcss アニメーションの設定
+## 1. Tailwindcss の設定
 
 以下のキーと値を追加してください。
 
 > tailwind.config.ts
 
 ```ts
+import type { Config } from "tailwindcss";
+import { type PluginAPI } from "tailwindcss/types/config";
+
 export default {
   theme: {
     extend: {
@@ -21,6 +24,18 @@ export default {
       },
     },
   },
+  plugins: [
+    function ({ addUtilities }: PluginAPI) {
+      addUtilities({
+        ".custom-image-gradient-stops": {
+          "--tw-gradient-to":
+            "rgb(113 113 122 / 0) var(--tw-gradient-to-position)",
+          "--tw-gradient-stops":
+            "var(--tw-gradient-from), rgb(113 113 122 / 0.1) var(--tw-gradient-via-position), var(--tw-gradient-to)",
+        },
+      });
+    },
+  ],
 } satisfies Config;
 ```
 
@@ -59,9 +74,9 @@ const config = {
 このファイルをコピーして追加してください。
 
 2. カスタム画像コンポーネントの作成
-`next/image` を拡張およびカスタムしたコンポーネントです。
+   `next/image` を拡張およびカスタムしたコンポーネントです。
 
->/src/components/custom/image.tsx
+> /src/components/custom/image.tsx
 
 このファイルをコピーして追加してください。
 

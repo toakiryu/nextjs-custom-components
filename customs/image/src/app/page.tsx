@@ -10,12 +10,18 @@ export default function Home() {
           alt="Image"
           src="/wp-content/3ae6f47b-fdff-45b6-976d-4b33addd1cf5.jpeg"
           width={100}
+          classNames={{
+            base: "w-full"
+          }}
         />
         <Image
           alt="Image"
           src="/wp-content/3ae6f47b-fdff-45b6-976d-4b33addd1cf5.jpeg"
           width={100}
           height={100}
+          classNames={{
+            base: "w-full"
+          }}
         />
         <Image
           alt="Image"

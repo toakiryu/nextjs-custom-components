@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { type PluginAPI } from "tailwindcss/types/config";
 
 export default {
   content: [
@@ -15,7 +16,7 @@ export default {
       keyframes: {
         shimmer: {
           "0%": { left: "-100%" },
-          "100%": { left: "100%" },
+          "100%": { left: "200%" },
         },
       },
       animation: {
@@ -23,5 +24,16 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }: PluginAPI) {
+      addUtilities({
+        ".custom-image-gradient-stops": {
+          "--tw-gradient-to":
+            "rgb(113 113 122 / 0) var(--tw-gradient-to-position)",
+          "--tw-gradient-stops":
+            "var(--tw-gradient-from), rgb(113 113 122 / 0.1) var(--tw-gradient-via-position), var(--tw-gradient-to)",
+        },
+      });
+    },
+  ],
 } satisfies Config;
